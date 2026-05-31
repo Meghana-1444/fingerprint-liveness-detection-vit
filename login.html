@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fingerprint Liveness Detection</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      background: #1a1c1f; /* Dark biometric theme */
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .navbar { background: #000; }
+    .navbar-brand { color: #00e6ac !important; font-weight: bold; }
+    h3, h5, h4 { color: #00e6ac; }
+
+    .btn-detect {
+      background: #00e6ac;
+      color: black;
+      font-weight: bold;
+      border: none;
+      box-shadow: 0 4px 15px rgba(0,230,172,0.6);
+      transition: all 0.3s ease-in-out;
+    }
+    .btn-detect:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,230,172,0.8);
+    }
+
+    /* 3D Card Effect */
+    .card-scan {
+      background: linear-gradient(145deg, #2a2d30, #1b1d20);
+      border: 2px solid #00e6ac;
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0px 10px 25px rgba(0,0,0,0.7), inset 0px 0px 10px rgba(0,230,172,0.3);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card-scan:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0px 15px 35px rgba(0,0,0,0.9), 0px 0px 25px rgba(0,230,172,0.6);
+    }
+    img {
+      max-height: 400px;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    }
+
+    /* Predictions List Styling */
+    .list-group-item {
+      background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+      border: 1px solid #00e6ac !important;
+      border-radius: 10px !important;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #00e6ac;
+      box-shadow: 0px 6px 15px rgba(0,0,0,0.6);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .list-group-item:hover {
+      transform: translateX(8px);
+      box-shadow: 0px 8px 20px rgba(0,230,172,0.5);
+      background: linear-gradient(145deg, #333, #222);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="{{ url_for('home') }}">🔒 Fingerprint Liveness Detection</a>
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('index') }}">Detection</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('charts') }}">Analytics</a></li>
+        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('performance') }}">Performance</a></li>
+        <li class="nav-item"><a class="btn btn-danger ms-2" href="{{ url_for('logout') }}">Logout</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Upload Section -->
+  <div class="container mt-4 text-center">
+    <h3>Upload Fingerprint Image for Liveness Detection 🧠</h3>
+    <form method="POST" enctype="multipart/form-data" class="my-4">
+      <input type="file" name="image" accept="image/*" class="form-control w-50 mx-auto mb-3" required>
+      <button type="submit" class="btn btn-detect">🔍 Analyze Fingerprint</button>
+    </form>
+
+    {% if uploaded %}
+    <div class="row mt-4">
+      <div class="col-md-6 text-center">
+        <div class="card-scan">
+          <h5>🖐 Original Fingerprint</h5>
+          <img src="{{ original }}" class="img-fluid">
+        </div>
+      </div>
+      <div class="col-md-6 text-center">
+        <div class="card-scan">
+          <h5>💡 Liveness Detection Result</h5>
+          <img src="{{ result }}" class="img-fluid">
+        </div>
+      </div>
+    </div>
+    <div class="mt-4">
+      <h4>🧬 Predictions:</h4>
+      <ul class="list-group w-50 mx-auto">
+        {% for p in predictions %}
+          <li class="list-group-item">
+            {{ p.class }} - Confidence: {{ p.confidence }}%
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>
